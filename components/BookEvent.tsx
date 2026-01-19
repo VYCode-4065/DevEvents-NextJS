@@ -1,16 +1,21 @@
 'use client';
+import { bookEvent } from '@/actions/booking/bookEvent.actions';
 import React, { useState } from 'react'
 
 
-const BookEvent = () => {
-    const [event,setEvent] = useState('')
+const BookEvent = ({eventId,slug}:{eventId:string,slug:string}) => {
+    const [email,setEmail] = useState('')
     const [submitted,setSubmitted] = useState(false)
 
-    function handleSubmit(e:React.FormEvent){
-        e.preventDefault();
+    async function handleSubmit(e:React.FormEvent<HTMLFormElement>){
+
+       e.preventDefault();
+        const response = await bookEvent({eventId,email,slug})
+        setSubmitted(true)
+        setEmail('');
         setTimeout(() => {
-            setSubmitted(true)
-        }, 1000);
+            setSubmitted(false)
+        }, 3000);
     }
   return (
     <div id='book-event'>
@@ -19,7 +24,7 @@ const BookEvent = () => {
             <form onSubmit={handleSubmit}>
                 <div className=''>
                     <label htmlFor="email">Email Address</label>
-                    <input required className='cursor-text' type="email" id="" placeholder='Enter your email address ' value={event} onChange={(e)=>setEvent(e.target.value)}/>
+                    <input required className='cursor-text' type="email" id="" placeholder='Enter your email address ' value={email} onChange={(e)=>setEmail(e.target.value)}/>
                 </div>
                 <button type="submit" className='button-submit'>Submit</button>
             </form>

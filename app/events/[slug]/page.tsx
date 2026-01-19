@@ -1,4 +1,4 @@
-import { getSimilarEvents } from "@/actions/events/getSimilarEvent";
+import { getSimilarEvents } from "@/actions/events/getSimilarEvent.actions";
 import BookEvent from "@/components/BookEvent";
 import EventCards from "@/components/EventCards";
 import { IEvent } from "@/database";
@@ -43,7 +43,7 @@ const EventDetailsPage = async({params}:{params:Promise<{slug:string}>}) => {
 
     const response = await fetch(`${BASE_URL}/api/events/${slug}`)
 
-    const {event:{title,description,image,tags,audience,agenda,time,location,date,overview,venue,organizer,mode}} = await response.json();
+    const {event:{title,description,image,tags,audience,agenda,time,location,date,overview,venue,organizer,mode,_id:eventId}} = await response.json();
 
 
     if(!description) return notFound();
@@ -86,14 +86,14 @@ const EventDetailsPage = async({params}:{params:Promise<{slug:string}>}) => {
                 {
                     bookings>0?<p>Meet  {bookings} people who have already booked their spot !</p>:<p>Be the first to book the spot !</p>
                 }
-                <BookEvent/>
+                <BookEvent eventId={eventId} slug={slug}/>
                 </div>
             </aside>
         </div>
         <div className="mt-10">
             <h3>Similar Events </h3>
             {
-                similarEvents.length>0?<div className="flex items-center gap-5 pt-10">
+                similarEvents.length>0?<div className="md:flex items-center gap-5 pt-10  w-full">
                 {
                     similarEvents.map(event=>(<EventCards {...event} key={event.title}/>))
                 }

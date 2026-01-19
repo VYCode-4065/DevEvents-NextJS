@@ -9,13 +9,7 @@ export const POST = async(req:NextRequest)=>{
 
         const formData = await req.formData();
 
-        let events;
-
-        try {
-            events = Object.fromEntries(formData.entries())
-        } catch (error) {
-            return NextResponse.json({message:"Invalid JSON data"},{status:400})
-        }
+        let events = Object.fromEntries(formData.entries());
 
         const file = formData.get('image') as File;
 
@@ -23,6 +17,8 @@ export const POST = async(req:NextRequest)=>{
             return NextResponse.json({message:"Image is required !"},{status:400})
         }
 
+      
+       
         const arrayBuffer = await file.arrayBuffer()
 
         const buffer = Buffer.from(arrayBuffer);
@@ -36,24 +32,35 @@ export const POST = async(req:NextRequest)=>{
             }).end(buffer)
         })
 
+        if(!uploadResult){
+            return NextResponse.json({message:"Image upload failed !"},{status:500})
+        }
+
         events.image = (uploadResult as {secure_url:string}).secure_url
 
-        let agenda = JSON.parse(events.agenda as string);
-        let tags = JSON.parse(events.tags as string);
+        try {
+            // Parse JSON strings to arrays
+            console.log(events.agenda,events.tags)
 
-        events.agenda = agenda;
-        events.tags = tags;
+            events.agenda = JSON.parse(events.agenda as string);
+            events.tags = JSON.parse(events.tags as string);
+            console.log(events.agenda,events.tags)
 
-        
+        } catch (error) {
+            return NextResponse.json({message:"Invalid agenda or tags format"},{status:400})
+        }
+
+
         const createdUser = await Event.create(events);
 
         if(!createdUser){
-            return NextResponse.json({message:"Currently unable to create new user !"},{status:500})
+            return NextResponse.json({message:"Currently unable to create new event !"},{status:500})
         }
         
-        return NextResponse.json({message:"User Created successfully ",user:createdUser},{status:201})
+        return NextResponse.json({message:"Event Created successfully ",event:createdUser},{status:201})
 
     } catch (e) {
+        console.log(e)
         return NextResponse.json({message:"Something went wrong in event post method ",error:e instanceof Error ? e.message:"Unknown"},{status:500})
     }
 }
