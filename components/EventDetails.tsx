@@ -37,10 +37,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const bookings = 10;
 
-const EventDetailsPage = async({params}:{params:Promise<{slug:string}>}) => {
+const EventDetailsPage = async({params}:{params:Promise<string>}) => {
 
-    const {slug} = await params
-
+    const slug = await params
     const response = await fetch(`${BASE_URL}/api/events/${slug}`)
 
     const {event:{title,description,image,tags,audience,agenda,time,location,date,overview,venue,organizer,mode,_id:eventId}} = await response.json();

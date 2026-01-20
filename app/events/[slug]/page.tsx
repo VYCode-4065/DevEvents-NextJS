@@ -2,9 +2,9 @@ import EventDetailsPage from "@/components/EventDetails"
 import { Suspense } from "react"
 
 const page = ({params}:{params:Promise<{slug:string}>})=>{
-
-    return <Suspense >
-        <EventDetailsPage params={params}/>
+    const slug = params.then(p=>p.slug)
+    return <Suspense fallback = {<div>Loading......</div>}>
+        <EventDetailsPage params={slug}/>
     </Suspense>
 }
 
