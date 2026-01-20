@@ -18,7 +18,7 @@ const Home = async() => {
         <h3>Featured Events</h3>
         <ul className="events list-none" >
           {
-            events.map((event:IEvent)=><li key={event.title}>
+            Array.isArray(events) && events.length>0 &&events.map((event:IEvent)=><li key={event.title}>
               <EventCards {...event}/>
             </li>)
           }
